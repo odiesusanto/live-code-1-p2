@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div class="container" align="center">
+            <form>
+                <!-- Item -->
+                <div class="form-group">
+                    <label for="additem" class="text-white">Item Name</label>
+                    <input type="text" class="form-control" id="item" placeholder="Input Item" v-model="additem">
+                </div>
+                <div class="form-row">
+                    <!-- Price -->
+                    <div class="form-group col-lg-6">
+                        <label for="addprice" class="text-white">Price</label>
+                        <input type="number" class="form-control" id="addprice" placeholder="Input Price" v-model="addprice">
+                    </div>
+                    <!-- Stock -->
+                    <div class="form-group col-lg-6">
+                        <label for="addstock" class="text-white">Stock</label>
+                        <input type="number" class="form-control" id="addstock" placeholder="Input Stock" v-model="addstock">
+                    </div>
+                    <!-- Tags -->
+                    <div class="form-group col-lg-6">
+                        <label for="addtags" class="text-white">Tags</label>
+                        <input type="text" class="form-control" id="addtags" placeholder="Input Tags" v-model="addtags">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" v-on:click="addItem">Add Item</button>
+            </form>
+            <hr>
+            <div class="search-item">
+                    <h2>Search Item</h2>
+                    <div class="form-group">
+                      <label for="name">Name:</label>
+                      <input v-model="input_name" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="price">Start Price:</label>
+                      <input v-model="input_price" type="text" class="form-control">
+                    </div>
+                    <div class="form-group">
+                      <label for="tags">Tags:</label>
+                      <input v-model="input_tags" type="text" class="form-control">
+                    </div>
+                    <button type="submit" class="btn btn-primary" @click="searchItem">Search</button>
+                    <hr>
+                  </div>
+        </div>
+        <br>
+        <br>
+        <div class="container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Tags</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(item, index) in items" :key="index">
+                        <td>
+                            {{item.name}}
+                        </td>
+                        <td>
+                            {{item.price}}
+                        </td>
+                        <td>
+                            {{item.stock}}
+                        </td>
+                        <td>
+                            {{item.tags}}
+                        </td>
+                    </tr>
+
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                items: [],
+                additem: '',
+                addprice: '',
+                addstock: '', 
+                addtags: '',
+            },
+            created() {
+                this.showItems()
+            },
+            methods: {
+                showItems() {
+                    let token = localStorage.getItem('token')
+                    // console.log(token)
+                    axios.get('http://localhost:3000/item',
+                        {
+                            headers: {
+                                token: token
+                            }
+                        })
+                        .then(tasks => {
+                            console.log("data", item.data.data)
+                            this.items = item.data.data
+                        })
+                        .catch(err => {
+                            console.log(err.message)
+                        })
+                },
+
+                addItem() {
+                    let token = localStorage.getItem('token')
+                    axios.post('http://localhost:3000/todos', {
+                        item: this.additem,
+                        price: this.addprice,
+                        stock: this.addstock,
+                        tags: this.addtags
+                    }, {
+                            headers: {
+                                token: token
+                            }
+                        })
+                        .then(itemAdded => {
+                            alert(`Item successfully added!`)
+                        })
+                        .catch(err => {
+                            console.log(err)
+                        })
+                }
+            }
+        })
+    </script>
+</body>
+
+
+</html>
